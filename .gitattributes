@@ -1,0 +1,24 @@
+# Normalize text files to LF in repo
+* text=auto eol=lf
+
+# Swift / Xcode project files
+*.swift text
+*.pbxproj text
+*.xcscheme text
+*.xcconfig text
+*.plist text
+*.entitlements text
+*.storyboard text
+*.xib text
+
+# Shell / scripts
+*.sh text eol=lf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.icns binary
+*.xcassets/** binary
