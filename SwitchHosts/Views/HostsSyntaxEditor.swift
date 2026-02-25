@@ -32,21 +32,29 @@ struct HostsSyntaxEditor: NSViewRepresentable {
         textView.textContainer?.widthTracksTextView = true
         textView.textContainer?.heightTracksTextView = false
         textView.textContainer?.containerSize = NSSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        textView.string = text
 
         scrollView.documentView = textView
 
         context.coordinator.textView = textView
-        context.coordinator.applyHighlighting(to: text)
+        context.coordinator.applyHighlighting()
 
         return scrollView
     }
 
     func updateNSView(_ nsView: NSScrollView, context: Context) {
         guard let textView = nsView.documentView as? NSTextView else { return }
+        context.coordinator.textBinding = $text
         textView.isEditable = isEditable
 
+        if context.coordinator.ignoreNextExternalSync {
+            context.coordinator.ignoreNextExternalSync = false
+            return
+        }
+
         if textView.string != text {
-            context.coordinator.applyHighlighting(to: text)
+            textView.string = text
+            context.coordinator.applyHighlighting()
         }
     }
 
@@ -55,48 +63,52 @@ struct HostsSyntaxEditor: NSViewRepresentable {
     }
 
     final class Coordinator: NSObject, NSTextViewDelegate {
-        @Binding var text: String
+        var textBinding: Binding<String>
         weak var textView: NSTextView?
         private var isUpdatingText = false
+        var ignoreNextExternalSync = false
 
         private let ipRegex = try? NSRegularExpression(pattern: #"\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b"#)
         private let domainRegex = try? NSRegularExpression(pattern: #"\b(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}\b"#)
 
         init(text: Binding<String>) {
-            self._text = text
+            self.textBinding = text
         }
 
         func textDidChange(_ notification: Notification) {
             guard let textView, !isUpdatingText else { return }
-            text = textView.string
-            applyHighlighting(to: textView.string)
+            ignoreNextExternalSync = true
+            textBinding.wrappedValue = textView.string
+            applyHighlighting()
         }
 
-        func applyHighlighting(to value: String) {
+        func applyHighlighting() {
             guard let textView else { return }
+            let value = textView.string
             let selectedRange = textView.selectedRange()
             isUpdatingText = true
 
-            let attributed = NSMutableAttributedString(string: value)
-            let fullRange = NSRange(location: 0, length: attributed.length)
-            attributed.addAttributes([
+            let fullRange = NSRange(location: 0, length: (value as NSString).length)
+
+            textView.textStorage?.beginEditing()
+            textView.textStorage?.setAttributes([
                 .font: NSFont.monospacedSystemFont(ofSize: NSFont.systemFontSize, weight: .regular),
                 .foregroundColor: NSColor.textColor
             ], range: fullRange)
 
             if let ipRegex {
                 ipRegex.matches(in: value, range: fullRange).forEach { match in
-                    attributed.addAttribute(.foregroundColor, value: NSColor.systemBlue, range: match.range)
+                    textView.textStorage?.addAttribute(.foregroundColor, value: NSColor.systemBlue, range: match.range)
                 }
             }
 
             if let domainRegex {
                 domainRegex.matches(in: value, range: fullRange).forEach { match in
-                    attributed.addAttribute(.foregroundColor, value: NSColor.labelColor, range: match.range)
+                    textView.textStorage?.addAttribute(.foregroundColor, value: NSColor.labelColor, range: match.range)
                 }
             }
 
-            textView.textStorage?.setAttributedString(attributed)
+            textView.textStorage?.endEditing()
             textView.setSelectedRange(selectedRange)
             isUpdatingText = false
         }

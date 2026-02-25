@@ -22,8 +22,14 @@ struct ContentView: View {
             List(selection: $selectedConfigId) {
                 // 系统 Hosts 部分
                 if let sysConfig = manager.configs.first(where: { $0.isSystem }) {
-                    NavigationLink(value: sysConfig.id) {
+                    HStack {
                         Label(sysConfig.name, systemImage: "desktopcomputer")
+                        Spacer()
+                    }
+                    .contentShape(Rectangle())
+                    .tag(sysConfig.id)
+                    .onTapGesture {
+                        selectedConfigId = sysConfig.id
                     }
                 }
                 
@@ -32,17 +38,20 @@ struct ContentView: View {
                 // 自定义配置部分
                 Section("自定义配置") {
                     ForEach(customConfigIndices, id: \.self) { index in
-                        NavigationLink(value: manager.configs[index].id) {
-                            HStack {
-                                Label(manager.configs[index].name, systemImage: "doc.text")
-                                Spacer()
-                                // 切换开关
-                                Toggle("", isOn: $manager.configs[index].isActive)
-                                    .labelsHidden()
-                                    .onChange(of: manager.configs[index].isActive) { _ in
-                                        handleToggleChange()
-                                    }
-                            }
+                        HStack {
+                            Label(manager.configs[index].name, systemImage: "doc.text")
+                            Spacer()
+                            // 切换开关
+                            Toggle("", isOn: $manager.configs[index].isActive)
+                                .labelsHidden()
+                                .onChange(of: manager.configs[index].isActive) { _ in
+                                    handleToggleChange()
+                                }
+                        }
+                        .contentShape(Rectangle())
+                        .tag(manager.configs[index].id)
+                        .onTapGesture {
+                            selectedConfigId = manager.configs[index].id
                         }
                         .contextMenu {
                             Button("删除", role: .destructive) {
@@ -66,12 +75,12 @@ struct ContentView: View {
         } detail: {
             // 右侧编辑器
             if let selectedId = selectedConfigId,
-               let index = manager.configs.firstIndex(where: { $0.id == selectedId }) {
+               let configBinding = bindingForConfig(id: selectedId) {
                 
                 VStack(spacing: 0) {
                     // 顶部工具栏区
                     HStack {
-                        Text(manager.configs[index].name)
+                        Text(configBinding.wrappedValue.name)
                             .font(.headline)
                         Spacer()
                         Button("保存配置") {
@@ -88,7 +97,8 @@ struct ContentView: View {
                     Divider()
                     
                     // 文本编辑器
-                    HostsSyntaxEditor(text: $manager.configs[index].content, isEditable: !manager.configs[index].isSystem)
+                    HostsSyntaxEditor(text: configBinding.content, isEditable: !configBinding.wrappedValue.isSystem)
+                        .id(selectedId)
                         .padding()
                 }
             } else {
@@ -168,6 +178,11 @@ struct ContentView: View {
 
     private var customConfigIndices: [Int] {
         manager.configs.indices.filter { !manager.configs[$0].isSystem }
+    }
+
+    private func bindingForConfig(id: UUID) -> Binding<HostConfig>? {
+        guard let index = manager.configs.firstIndex(where: { $0.id == id }) else { return nil }
+        return $manager.configs[index]
     }
 
     private var isAlertPresented: Binding<Bool> {
