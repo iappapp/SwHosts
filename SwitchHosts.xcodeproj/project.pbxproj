@@ -1,0 +1,556 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		0461E7CD2F4E8A4C00FB19DA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0461E7B62F4E8A4900FB19DA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0461E7BD2F4E8A4900FB19DA;
+			remoteInfo = SwitchHosts;
+		};
+		0461E7D72F4E8A4C00FB19DA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0461E7B62F4E8A4900FB19DA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0461E7BD2F4E8A4900FB19DA;
+			remoteInfo = SwitchHosts;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0461E7BE2F4E8A4900FB19DA /* SwitchHosts.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwitchHosts.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0461E7CC2F4E8A4C00FB19DA /* SwitchHostsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwitchHostsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0461E7D62F4E8A4C00FB19DA /* SwitchHostsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwitchHostsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		0461E7C02F4E8A4900FB19DA /* SwitchHosts */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SwitchHosts;
+			sourceTree = "<group>";
+		};
+		0461E7CF2F4E8A4C00FB19DA /* SwitchHostsTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SwitchHostsTests;
+			sourceTree = "<group>";
+		};
+		0461E7D92F4E8A4C00FB19DA /* SwitchHostsUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SwitchHostsUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0461E7BB2F4E8A4900FB19DA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0461E7C92F4E8A4C00FB19DA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0461E7D32F4E8A4C00FB19DA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0461E7B52F4E8A4900FB19DA = {
+			isa = PBXGroup;
+			children = (
+				0461E7C02F4E8A4900FB19DA /* SwitchHosts */,
+				0461E7CF2F4E8A4C00FB19DA /* SwitchHostsTests */,
+				0461E7D92F4E8A4C00FB19DA /* SwitchHostsUITests */,
+				0461E7BF2F4E8A4900FB19DA /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0461E7BF2F4E8A4900FB19DA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0461E7BE2F4E8A4900FB19DA /* SwitchHosts.app */,
+				0461E7CC2F4E8A4C00FB19DA /* SwitchHostsTests.xctest */,
+				0461E7D62F4E8A4C00FB19DA /* SwitchHostsUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0461E7BD2F4E8A4900FB19DA /* SwitchHosts */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0461E7E02F4E8A4C00FB19DA /* Build configuration list for PBXNativeTarget "SwitchHosts" */;
+			buildPhases = (
+				0461E7BA2F4E8A4900FB19DA /* Sources */,
+				0461E7BB2F4E8A4900FB19DA /* Frameworks */,
+				0461E7BC2F4E8A4900FB19DA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				0461E7C02F4E8A4900FB19DA /* SwitchHosts */,
+			);
+			name = SwitchHosts;
+			packageProductDependencies = (
+			);
+			productName = SwitchHosts;
+			productReference = 0461E7BE2F4E8A4900FB19DA /* SwitchHosts.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0461E7CB2F4E8A4C00FB19DA /* SwitchHostsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0461E7E32F4E8A4C00FB19DA /* Build configuration list for PBXNativeTarget "SwitchHostsTests" */;
+			buildPhases = (
+				0461E7C82F4E8A4C00FB19DA /* Sources */,
+				0461E7C92F4E8A4C00FB19DA /* Frameworks */,
+				0461E7CA2F4E8A4C00FB19DA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0461E7CE2F4E8A4C00FB19DA /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				0461E7CF2F4E8A4C00FB19DA /* SwitchHostsTests */,
+			);
+			name = SwitchHostsTests;
+			packageProductDependencies = (
+			);
+			productName = SwitchHostsTests;
+			productReference = 0461E7CC2F4E8A4C00FB19DA /* SwitchHostsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		0461E7D52F4E8A4C00FB19DA /* SwitchHostsUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0461E7E62F4E8A4C00FB19DA /* Build configuration list for PBXNativeTarget "SwitchHostsUITests" */;
+			buildPhases = (
+				0461E7D22F4E8A4C00FB19DA /* Sources */,
+				0461E7D32F4E8A4C00FB19DA /* Frameworks */,
+				0461E7D42F4E8A4C00FB19DA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0461E7D82F4E8A4C00FB19DA /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				0461E7D92F4E8A4C00FB19DA /* SwitchHostsUITests */,
+			);
+			name = SwitchHostsUITests;
+			packageProductDependencies = (
+			);
+			productName = SwitchHostsUITests;
+			productReference = 0461E7D62F4E8A4C00FB19DA /* SwitchHostsUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0461E7B62F4E8A4900FB19DA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					0461E7BD2F4E8A4900FB19DA = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					0461E7CB2F4E8A4C00FB19DA = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 0461E7BD2F4E8A4900FB19DA;
+					};
+					0461E7D52F4E8A4C00FB19DA = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 0461E7BD2F4E8A4900FB19DA;
+					};
+				};
+			};
+			buildConfigurationList = 0461E7B92F4E8A4900FB19DA /* Build configuration list for PBXProject "SwitchHosts" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 0461E7B52F4E8A4900FB19DA;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 0461E7BF2F4E8A4900FB19DA /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0461E7BD2F4E8A4900FB19DA /* SwitchHosts */,
+				0461E7CB2F4E8A4C00FB19DA /* SwitchHostsTests */,
+				0461E7D52F4E8A4C00FB19DA /* SwitchHostsUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0461E7BC2F4E8A4900FB19DA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0461E7CA2F4E8A4C00FB19DA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0461E7D42F4E8A4C00FB19DA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0461E7BA2F4E8A4900FB19DA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0461E7C82F4E8A4C00FB19DA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0461E7D22F4E8A4C00FB19DA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0461E7CE2F4E8A4C00FB19DA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0461E7BD2F4E8A4900FB19DA /* SwitchHosts */;
+			targetProxy = 0461E7CD2F4E8A4C00FB19DA /* PBXContainerItemProxy */;
+		};
+		0461E7D82F4E8A4C00FB19DA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0461E7BD2F4E8A4900FB19DA /* SwitchHosts */;
+			targetProxy = 0461E7D72F4E8A4C00FB19DA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0461E7DE2F4E8A4C00FB19DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = P2XLW7B46G;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		0461E7DF2F4E8A4C00FB19DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = P2XLW7B46G;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		0461E7E12F4E8A4C00FB19DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SwitchHosts/SwitchHosts.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P2XLW7B46G;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.github.iappapp.SwitchHosts;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		0461E7E22F4E8A4C00FB19DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SwitchHosts/SwitchHosts.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P2XLW7B46G;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.github.iappapp.SwitchHosts;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		0461E7E42F4E8A4C00FB19DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P2XLW7B46G;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.github.iappapp.SwitchHostsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SwitchHosts.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SwitchHosts";
+			};
+			name = Debug;
+		};
+		0461E7E52F4E8A4C00FB19DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P2XLW7B46G;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.github.iappapp.SwitchHostsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SwitchHosts.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SwitchHosts";
+			};
+			name = Release;
+		};
+		0461E7E72F4E8A4C00FB19DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P2XLW7B46G;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.github.iappapp.SwitchHostsUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = SwitchHosts;
+			};
+			name = Debug;
+		};
+		0461E7E82F4E8A4C00FB19DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P2XLW7B46G;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.github.iappapp.SwitchHostsUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = SwitchHosts;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0461E7B92F4E8A4900FB19DA /* Build configuration list for PBXProject "SwitchHosts" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0461E7DE2F4E8A4C00FB19DA /* Debug */,
+				0461E7DF2F4E8A4C00FB19DA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0461E7E02F4E8A4C00FB19DA /* Build configuration list for PBXNativeTarget "SwitchHosts" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0461E7E12F4E8A4C00FB19DA /* Debug */,
+				0461E7E22F4E8A4C00FB19DA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0461E7E32F4E8A4C00FB19DA /* Build configuration list for PBXNativeTarget "SwitchHostsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0461E7E42F4E8A4C00FB19DA /* Debug */,
+				0461E7E52F4E8A4C00FB19DA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0461E7E62F4E8A4C00FB19DA /* Build configuration list for PBXNativeTarget "SwitchHostsUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0461E7E72F4E8A4C00FB19DA /* Debug */,
+				0461E7E82F4E8A4C00FB19DA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0461E7B62F4E8A4900FB19DA /* Project object */;
+}
