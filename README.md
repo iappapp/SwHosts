@@ -131,6 +131,13 @@ hdiutil create -volname "SwitchHosts" \
 - 增加导入导出（JSON / hosts 文本）
 - 增加“预览最终合并结果”面板
 
+## 开源协作
+
+- 许可证：本项目使用 [MIT License](LICENSE)
+- 参与贡献：请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)
+- 行为准则：请遵守 [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- 安全反馈：请参考 [SECURITY.md](SECURITY.md)
+
 ---
 
 如果你希望，我可以继续补一份 `README_EN.md`（英文版）和“一键发布脚本（build + dmg + 可选签名/公证）”。
