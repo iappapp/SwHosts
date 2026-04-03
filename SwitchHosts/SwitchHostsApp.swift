@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct SwitchHostsApp: App {
     var body: some Scene {
-        WindowGroup {
+        Window("Main", id: "main") {
             ContentView()
         }
     }
