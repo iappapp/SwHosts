@@ -15,6 +15,8 @@ struct ContentView: View {
     @State private var newConfigName = ""
     @State private var newConfigContent = ""
     @State private var alertMessage: String?
+    @State private var showCredentialDialog = false
+    @State private var adminPassword = ""
     
     var body: some View {
         NavigationSplitView {
@@ -68,6 +70,25 @@ struct ContentView: View {
                         showAddConfigSheet = true
                     } label: {
                         Label("新增配置", systemImage: "plus")
+                    }
+                }
+                
+                ToolbarItem(placement: .automatic) {
+                    if manager.hasSavedCredentials {
+                        Button {
+                            manager.clearAdminCredentials()
+                            alertMessage = "已清除保存的管理员凭据"
+                        } label: {
+                            Label("清除钥匙串凭据", systemImage: "key.slash.fill")
+                        }
+                        .help("清除保存的管理员密码，下次将重新提示输入")
+                    } else {
+                        Button {
+                            showCredentialDialog = true
+                        } label: {
+                            Label("保存管理员凭据", systemImage: "key.fill")
+                        }
+                        .help("保存管理员密码到钥匙串，避免重复输入")
                     }
                 }
             }
@@ -145,6 +166,26 @@ struct ContentView: View {
             .padding(16)
             .frame(minWidth: 500, minHeight: 320)
         }
+        .alert("保存管理员凭据", isPresented: $showCredentialDialog) {
+            SecureField("管理员密码", text: $adminPassword)
+            Button("取消", role: .cancel) {
+                adminPassword = ""
+            }
+            Button("保存") {
+                if !adminPassword.isEmpty {
+                    let success = manager.saveAdminCredentials(password: adminPassword)
+                    adminPassword = ""
+                    if success {
+                        alertMessage = "管理员凭据已保存到钥匙串"
+                    } else {
+                        alertMessage = "保存凭据失败"
+                    }
+                }
+            }
+            .keyboardShortcut(.defaultAction)
+        } message: {
+            Text("请输入您的管理员密码以保存到钥匙串。之后应用 Hosts 时将自动使用该密码，无需重复输入。")
+        }
         .alert("提示", isPresented: isAlertPresented) {
             Button("确定", role: .cancel) {}
         } message: {
@@ -157,6 +198,8 @@ struct ContentView: View {
         let result = manager.applyCurrentActiveConfigs()
         if result {
             manager.saveUserConfigs()
+            // 刷新钥匙串状态
+            manager.checkSavedCredentials()
             alertMessage = "Hosts 已保存并应用"
         } else {
             alertMessage = manager.lastErrorMessage ?? "Hosts 应用失败"
