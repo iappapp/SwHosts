@@ -213,7 +213,7 @@ final class HostsManager: ObservableObject {
             "if theButton is \"确认并记住\" then",
             "    set resultText to \"REMEMBER:\" & thePassword",
             "else",
-            "    set resultText to \"NORMAL:\" & thePassword",
+            "    set resultText to \"REMEMBER:\" & thePassword",
             "end if",
             "return resultText"
         ]
