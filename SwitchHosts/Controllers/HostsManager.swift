@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+import AppKit
 
 final class HostsManager: ObservableObject {
     @Published var configs: [HostConfig] = []
@@ -141,7 +142,8 @@ final class HostsManager: ObservableObject {
         }
         
         // 3. 使用 AppleScript 进行提权（会弹出系统管理员密码框）
-        let success = executeWithAppleScriptPrompt(tempFileURL: tempFileURL)
+        // 注意：这里需要等待用户输入，所以仍然需要同步执行
+        let success = executeWithAppleScriptPromptSync(tempFileURL: tempFileURL)
         if success {
             flushDNS()
         }
@@ -197,10 +199,16 @@ final class HostsManager: ObservableObject {
         return true
     }
     
-    /// 使用 AppleScript 弹窗让用户输入密码，并提供记住密码的选项
-    private func executeWithAppleScriptPrompt(tempFileURL: URL) -> Bool {
+    /// 同步版本的 AppleScript 提权（用于保持现有调用链兼容性）
+    private func executeWithAppleScriptPromptSync(tempFileURL: URL) -> Bool {
         // 获取当前用户名
         let username = NSUserName()
+        
+        // 激活应用，确保窗口处于前台，减少焦点丢失的可能性
+        if let app = NSApplication.shared.windows.first {
+            app.makeKeyAndOrderFront(nil)
+            NSApplication.shared.activate(ignoringOtherApps: true)
+        }
         
         // 使用 -e 参数多次传递，避免复杂的字符串转义
         let appleScriptLines = [
@@ -213,7 +221,7 @@ final class HostsManager: ObservableObject {
             "if theButton is \"确认并记住\" then",
             "    set resultText to \"REMEMBER:\" & thePassword",
             "else",
-            "    set resultText to \"REMEMBER:\" & thePassword",
+            "    set resultText to \"NORMAL:\" & thePassword",
             "end if",
             "return resultText"
         ]
@@ -260,7 +268,19 @@ final class HostsManager: ObservableObject {
                 let password = String(outputText.dropFirst(9)) // 移除 "REMEMBER:" 前缀
                 savedPassword = password
                 hasSavedCredentials = true
+            } else if outputText.hasPrefix("NORMAL:") {
+                // 用户选择不记住密码
+                let password = String(outputText.dropFirst(7)) // 移除 "NORMAL:" 前缀
+                savedPassword = password
+                hasSavedCredentials = false
+                // 不保存到钥匙串
+            } else {
+                lastErrorMessage = "未获取到有效的响应格式"
+                return false
             }
+        } else {
+            lastErrorMessage = "未获取到密码"
+            return false
         }
         
         // 现在使用获取到的密码执行提权命令
