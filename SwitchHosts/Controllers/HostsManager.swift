@@ -141,9 +141,8 @@ final class HostsManager: ObservableObject {
             hasSavedCredentials = false
         }
         
-        // 3. 使用 AppleScript 进行提权（会弹出系统管理员密码框）
-        // 注意：这里需要等待用户输入，所以仍然需要同步执行
-        let success = executeWithAppleScriptPromptSync(tempFileURL: tempFileURL)
+        // 3. 使用原生 macOS 对话框获取管理员密码
+        let success = executeWithNativeDialog(tempFileURL: tempFileURL)
         if success {
             flushDNS()
         }
@@ -197,6 +196,50 @@ final class HostsManager: ObservableObject {
         hasSavedCredentials = true
         
         return true
+    }
+    
+    /// 使用原生 macOS 对话框获取管理员密码并执行提权
+    private func executeWithNativeDialog(tempFileURL: URL) -> Bool {
+        // 激活应用，确保窗口处于前台
+        NSApplication.shared.activate(ignoringOtherApps: true)
+        
+        // 创建密码输入对话框
+        let alert = NSAlert()
+        alert.messageText = "需要管理员权限"
+        alert.informativeText = "SwitchHosts 需要管理员权限来更新 /etc/hosts 文件"
+        alert.alertStyle = .warning
+        
+        // 添加密码输入框
+        let passwordField = NSSecureTextField(frame: NSRect(x: 0, y: 0, width: 250, height: 24))
+        passwordField.placeholderString = "请输入管理员密码"
+        alert.accessoryView = passwordField
+        
+        // 添加按钮
+        alert.addButton(withTitle: "确认并记住")
+        alert.addButton(withTitle: "取消")
+        
+        // 显示对话框
+        let response = alert.runModal()
+        
+        // 用户点击取消
+        if response == .alertSecondButtonReturn {
+            lastErrorMessage = "提权已取消"
+            return false
+        }
+        
+        // 获取密码
+        let password = passwordField.stringValue
+        if password.isEmpty {
+            lastErrorMessage = "密码不能为空"
+            return false
+        }
+        
+        // 保存密码到内存（默认记住）
+        savedPassword = password
+        hasSavedCredentials = true
+        
+        // 使用保存的密码执行提权
+        return executeWithSavedCredentials(tempFileURL: tempFileURL, password: password)
     }
     
     /// 同步版本的 AppleScript 提权（用于保持现有调用链兼容性）
