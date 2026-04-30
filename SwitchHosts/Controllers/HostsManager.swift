@@ -212,18 +212,12 @@ final class HostsManager: ObservableObject {
         
         // 使用 -e 参数多次传递，避免复杂的字符串转义
         let appleScriptLines = [
-            // 显示密码输入对话框，提供记住密码选项
-            "set theResult to display dialog \"SwitchHosts 需要管理员权限来更新 /etc/hosts\" default answer \"\" with hidden answer buttons {\"取消\", \"确认并记住\", \"确认\"} default button 3 cancel button 1 with icon caution",
+            // 显示密码输入对话框，只有两个按钮:取消 和 确认并记住
+            "set theResult to display dialog \"SwitchHosts 需要管理员权限来更新 /etc/hosts\" default answer \"\" with hidden answer buttons {\"取消\", \"确认并记住\"} default button 2 cancel button 1 with icon caution",
             "set thePassword to text returned of theResult",
-            "set theButton to button returned of theResult",
             "",
-            // 返回按钮选择和密码（通过标准输出传递给 Swift）
-            "if theButton is \"确认并记住\" then",
-            "    set resultText to \"REMEMBER:\" & thePassword",
-            "else",
-            "    set resultText to \"NORMAL:\" & thePassword",
-            "end if",
-            "return resultText"
+            // 返回密码（默认都会记住）
+            "return thePassword"
         ]
         
         let appleScriptContent = appleScriptLines.joined(separator: "\n")
@@ -260,34 +254,16 @@ final class HostsManager: ObservableObject {
             return false
         }
         
-        // 读取 AppleScript 的输出，获取密码和是否记住的选择
+        // 读取 AppleScript 的输出,获取密码
         let outputData = outputPipe.fileHandleForReading.readDataToEndOfFile()
-        if let outputText = String(data: outputData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) {
-            if outputText.hasPrefix("REMEMBER:") {
-                // 用户选择记住密码
-                let password = String(outputText.dropFirst(9)) // 移除 "REMEMBER:" 前缀
-                savedPassword = password
-                hasSavedCredentials = true
-            } else if outputText.hasPrefix("NORMAL:") {
-                // 用户选择不记住密码
-                let password = String(outputText.dropFirst(7)) // 移除 "NORMAL:" 前缀
-                savedPassword = password
-                hasSavedCredentials = false
-                // 不保存到钥匙串
-            } else {
-                lastErrorMessage = "未获取到有效的响应格式"
-                return false
-            }
-        } else {
+        guard let password = String(data: outputData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines), !password.isEmpty else {
             lastErrorMessage = "未获取到密码"
             return false
         }
         
-        // 现在使用获取到的密码执行提权命令
-        guard let password = savedPassword ?? (savedPassword != nil ? savedPassword : nil) else {
-            lastErrorMessage = "未获取到密码"
-            return false
-        }
+        // 用户点击"确认并记住",保存密码到内存
+        savedPassword = password
+        hasSavedCredentials = true
         
         return executeWithSavedCredentials(tempFileURL: tempFileURL, password: password)
     }
