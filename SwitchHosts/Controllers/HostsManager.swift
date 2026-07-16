@@ -9,6 +9,8 @@
 import Foundation
 import SwiftUI
 import AppKit
+import LocalAuthentication
+import Security
 
 final class HostsManager: ObservableObject {
     @Published var configs: [HostConfig] = []
@@ -91,22 +93,24 @@ final class HostsManager: ObservableObject {
         return applyHosts(content: finalContent)
     }
     
-    /// 保存管理员密码到内存
+    /// 保存管理员密码到钥匙串（支持 Touch ID 的设备启用生物识别保护）
     func saveAdminCredentials(password: String) -> Bool {
         savedPassword = password
-        hasSavedCredentials = true
-        return true
+        let ok = KeychainManager.savePassword(password, requireBiometrics: canUseBiometrics())
+        hasSavedCredentials = ok || savedPassword != nil
+        return hasSavedCredentials
     }
     
     /// 清除保存的管理员密码
     func clearAdminCredentials() {
         savedPassword = nil
+        KeychainManager.deletePassword()
         hasSavedCredentials = false
     }
     
     /// 检查是否有保存的密码
     func checkSavedCredentials() -> Bool {
-        hasSavedCredentials = (savedPassword != nil)
+        hasSavedCredentials = savedPassword != nil || KeychainManager.hasStoredPassword()
         return hasSavedCredentials
     }
 
@@ -130,19 +134,45 @@ final class HostsManager: ObservableObject {
             return false
         }
         
-        // 2. 尝试使用保存的密码进行提权
+        // 2. 钥匙串凭据 + Touch ID 解锁（弹出系统指纹面板，无密码免输）
+        if KeychainManager.hasStoredPassword() {
+            switch KeychainManager.loadPassword(useBiometrics: canUseBiometrics()) {
+            case .success(let password):
+                if executeWithSavedCredentials(tempFileURL: tempFileURL, password: password) {
+                    savedPassword = password
+                    hasSavedCredentials = true
+                    flushDNS()
+                    return true
+                }
+                // 密码失效，清理后回退
+                KeychainManager.deletePassword()
+                savedPassword = nil
+                hasSavedCredentials = false
+            case .canceled:
+                lastErrorMessage = "提权已取消"
+                return false
+            case .fallback:
+                // 用户在指纹框点击「使用密码」，回退到密码输入框
+                break
+            case .notFound:
+                break
+            case .failed(let message):
+                lastErrorMessage = message
+            }
+        }
+
+        // 3. 尝试使用内存中的密码进行提权
         if let password = savedPassword {
             if executeWithSavedCredentials(tempFileURL: tempFileURL, password: password) {
                 flushDNS()
                 return true
             }
-            // 如果密码失败，清除并回退到手动输入
             savedPassword = nil
             hasSavedCredentials = false
         }
-        
-        // 3. 使用原生 macOS 对话框获取管理员密码
-        let success = executeWithNativeDialog(tempFileURL: tempFileURL)
+
+        // 4. 无保存凭据：弹出密码输入框，验证成功后存入钥匙串供下次使用
+        let success = executeWithPasswordInput(tempFileURL: tempFileURL)
         if success {
             flushDNS()
         }
@@ -198,119 +228,60 @@ final class HostsManager: ObservableObject {
         return true
     }
     
-    /// 使用原生 macOS 对话框获取管理员密码并执行提权
-    private func executeWithNativeDialog(tempFileURL: URL) -> Bool {
-        // 激活应用，确保窗口处于前台
+    /// 弹出密码输入框，验证成功后存入钥匙串（支持 Touch ID 的设备下次可用指纹解锁）
+    private func executeWithPasswordInput(tempFileURL: URL) -> Bool {
         NSApplication.shared.activate(ignoringOtherApps: true)
-        
-        // 创建密码输入对话框
+
         let alert = NSAlert()
-        alert.messageText = "需要管理员权限"
-        alert.informativeText = "SwitchHosts 需要管理员权限来更新 /etc/hosts 文件"
+        alert.messageText = "需要管理员密码"
+        alert.informativeText = "SwitchHosts 需要管理员密码来更新 /etc/hosts。"
         alert.alertStyle = .warning
-        
-        // 添加密码输入框
-        let passwordField = NSSecureTextField(frame: NSRect(x: 0, y: 0, width: 250, height: 24))
+
+        let passwordField = NSSecureTextField(frame: NSRect(x: 0, y: 0, width: 260, height: 24))
         passwordField.placeholderString = "请输入管理员密码"
         alert.accessoryView = passwordField
-        
-        // 添加按钮
-        alert.addButton(withTitle: "确认并记住")
+
+        alert.addButton(withTitle: "确认")
         alert.addButton(withTitle: "取消")
-        
-        // 显示对话框
+
         let response = alert.runModal()
-        
-        // 用户点击取消
         if response == .alertSecondButtonReturn {
             lastErrorMessage = "提权已取消"
             return false
         }
-        
-        // 获取密码
+
         let password = passwordField.stringValue
         if password.isEmpty {
             lastErrorMessage = "密码不能为空"
             return false
         }
-        
-        // 保存密码到内存（默认记住）
+
+        guard executeWithSavedCredentials(tempFileURL: tempFileURL, password: password) else {
+            return false
+        }
+
+        // 验证成功，存入钥匙串供下次使用
         savedPassword = password
-        hasSavedCredentials = true
-        
-        // 使用保存的密码执行提权
-        return executeWithSavedCredentials(tempFileURL: tempFileURL, password: password)
+        if KeychainManager.savePassword(password, requireBiometrics: canUseBiometrics()) {
+            hasSavedCredentials = true
+        }
+        return true
     }
-    
-    /// 同步版本的 AppleScript 提权（用于保持现有调用链兼容性）
-    private func executeWithAppleScriptPromptSync(tempFileURL: URL) -> Bool {
-        // 获取当前用户名
-        let username = NSUserName()
-        
-        // 激活应用，确保窗口处于前台，减少焦点丢失的可能性
-        if let app = NSApplication.shared.windows.first {
-            app.makeKeyAndOrderFront(nil)
-            NSApplication.shared.activate(ignoringOtherApps: true)
-        }
-        
-        // 使用 -e 参数多次传递，避免复杂的字符串转义
-        let appleScriptLines = [
-            // 显示密码输入对话框，只有两个按钮:取消 和 确认并记住
-            "set theResult to display dialog \"SwitchHosts 需要管理员权限来更新 /etc/hosts\" default answer \"\" with hidden answer buttons {\"取消\", \"确认并记住\"} default button 2 cancel button 1 with icon caution",
-            "set thePassword to text returned of theResult",
-            "",
-            // 返回密码（默认都会记住）
-            "return thePassword"
-        ]
-        
-        let appleScriptContent = appleScriptLines.joined(separator: "\n")
-        
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
-        process.arguments = ["-e", appleScriptContent]
-        
-        let outputPipe = Pipe()
-        let errorPipe = Pipe()
-        process.standardOutput = outputPipe
-        process.standardError = errorPipe
-        
-        do {
-            try process.run()
-            process.waitUntilExit()
-        } catch {
-            lastErrorMessage = "无法启动提权流程: \(error.localizedDescription)"
+
+    /// 检测当前硬件是否支持 Touch ID / Optic ID
+    private func canUseBiometrics() -> Bool {
+        let context = LAContext()
+        var error: NSError?
+        guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
             return false
         }
-        
-        if process.terminationStatus != 0 {
-            let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
-            let stderrText = String(data: errorData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            
-            if stderrText.localizedCaseInsensitiveContains("user canceled") {
-                lastErrorMessage = "提权已取消"
-            } else if stderrText.localizedCaseInsensitiveContains("incorrect password") ||
-                      stderrText.localizedCaseInsensitiveContains("authentication failed") {
-                lastErrorMessage = "提权失败：管理员账号或密码不正确"
-            } else {
-                lastErrorMessage = stderrText.isEmpty ? "提权修改失败（退出码: \(process.terminationStatus)）" : "提权修改失败: \(stderrText)"
-            }
-            return false
+        if context.biometryType == .touchID { return true }
+        if #available(macOS 14.0, *) {
+            return context.biometryType == .opticID
         }
-        
-        // 读取 AppleScript 的输出,获取密码
-        let outputData = outputPipe.fileHandleForReading.readDataToEndOfFile()
-        guard let password = String(data: outputData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines), !password.isEmpty else {
-            lastErrorMessage = "未获取到密码"
-            return false
-        }
-        
-        // 用户点击"确认并记住",保存密码到内存
-        savedPassword = password
-        hasSavedCredentials = true
-        
-        return executeWithSavedCredentials(tempFileURL: tempFileURL, password: password)
+        return false
     }
-    
+
     /// 刷新 macOS DNS 缓存
     private func flushDNS() {
         let task = Process()
@@ -379,3 +350,6 @@ final class HostsManager: ObservableObject {
         return String(content[..<startRange.lowerBound]).trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
+
+// MARK: - Keychain
+
