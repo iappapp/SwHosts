@@ -7,123 +7,88 @@
 - ✅ 系统 Hosts 自动加载与清洗
 - ✅ 多配置管理（新增、删除、编辑）
 - ✅ 配置启停与智能合并
-- ✅ **钥匙串支持**：保存管理员密码，避免重复输入
+- ✅ **Touch ID 指纹解锁**：支持的设备可用指纹代替输入密码
+- ✅ **钥匙串支持**：首次输入密码后自动保存，之后免输
 - ✅ 安全写入机制（AppleScript 提权）
 - ✅ 语法高亮编辑器
 - ✅ DNS 缓存自动刷新
 
-## 🔑 钥匙串功能说明
-
-### 什么是钥匙串支持？
-
-钥匙串是 macOS 系统提供的安全凭据存储服务。SwitchHosts 利用钥匙串保存您的管理员密码，让您无需每次应用 Hosts 时都输入密码。
-
-### 如何使用？
-
-#### 首次使用（保存密码）
-
-1. 点击工具栏的 **🔑 保存管理员凭据** 按钮
-2. 在弹出的对话框中输入您的管理员密码
-3. 点击"保存"
-4. 之后应用 Hosts 时将自动使用该密码
-
-#### 清除已保存的密码
-
-当您看到工具栏显示 **🔑̸ 清除钥匙串凭据** 按钮时，表示已保存密码。点击该按钮即可清除。
+## 🔑 鉴权与钥匙串
 
 ### 工作流程
 
 ```
-应用 Hosts
+点「保存并应用」
     ↓
-检查是否有保存的钥匙串凭据？
-    ↓ 是
-尝试使用保存的凭据
-    ↓ 成功
-✅ 应用成功
-    ↓ 失败（密码错误）
-清除失效凭据 → 回退到手动输入
-    ↓ 否
-弹出密码输入框（可选择保存到钥匙串）
+钥匙串有保存的密码？
+    ├─ 是 → 支持指纹？
+    │       ├─ 是 → 弹出 Touch ID 验证
+    │       │       ├─ 通过 → 静默读取钥匙串密码 → 静默写入 /etc/hosts ✅
+    │       │       ├─ 点「使用密码」→ 回退到密码输入框
+    │       │       └─ 取消 → 取消
+    │       └─ 否 → 静默读取钥匙串密码 → 静默写入 /etc/hosts ✅
+    └─ 否 → 弹出密码输入框
+            ├─ 验证成功 → 存入钥匙串 → 写入 /etc/hosts ✅（下次走指纹/钥匙串）
+            └─ 验证失败 → 提示错误
 ```
+
+### 首次使用
+
+1. 编辑 / 切换配置后点 **「保存并应用」**
+2. 弹出密码输入框，输入管理员密码
+3. 验证成功后密码**自动存入钥匙串**，本次写入 `/etc/hosts`
+4. 之后每次「保存并应用」：
+   - 支持 Touch ID 的设备 → 弹指纹验证
+   - 不支持的设备 → 静默读取钥匙串，无需再输密码
+
+### Touch ID 说明
+
+- 仅在支持 Touch ID / Optic ID 的 Mac 上启用
+- 指纹验证框中点「使用密码」可回退到密码输入
+- 指纹验证通过后，密码从钥匙串静默读取，用于 AppleScript 提权写入 `/etc/hosts`
+- 指纹本身**不直接授予管理员权限**，而是解锁钥匙串中已保存的密码
+
+### 密码失效处理
+
+- 管理员密码被修改后，钥匙串中的旧密码会失效
+- 下次应用时自动检测失效，清除旧凭据并重新弹出密码输入框
 
 ### 安全性
 
 - ✅ 密码使用 macOS Keychain Services API 加密存储
 - ✅ 仅在设备解锁时可访问（`kSecAttrAccessibleWhenUnlockedThisDeviceOnly`）
-- ✅ 不会明文存储在磁盘或代码中
-- ✅ 可随时清除，完全由用户控制
-
-### 常见问题
-
-**Q: 如果我更改了管理员密码怎么办？**  
-A: 下次应用 Hosts 时，如果钥匙串中的旧密码失效，系统会自动清除并提示您重新输入新密码。
-
-**Q: 密码保存在哪里？**  
-A: 保存在 macOS 钥匙串中，Service 名称为 `com.switchhosts.admin`。您可以在"钥匙串访问"应用中查看。
-
-**Q: 可以不保存密码吗？**  
-A: 当然可以。不点击保存按钮，每次都会提示输入密码。
-
-**Q: 多台 Mac 之间会同步吗？**  
-A: 不会。钥匙串数据仅保存在当前设备上（`ThisDeviceOnly` 属性）。
-
-## 🐛 已知问题修复
-
-### AppleScript 语法错误修复
-
-**问题描述：**  
-之前版本在某些情况下会出现以下错误：
-```
-提权修改失败: /Users/mac/.swHosts/temp_prompt_XXX.scpt:383:384: 
-script error: 预期是行的结尾等等，却找到未知的记号。 (-2741)
-```
-
-**原因分析：**
-- AppleScript 字符串中包含特殊字符（如引号、反斜杠、路径等）时未正确转义
-- 使用多行字符串模板时，Swift 的字符串插值与 AppleScript 语法冲突
-- `quoted form of` 的使用位置不当
-
-**解决方案：**
-1. ✅ 使用数组逐行构建 AppleScript，避免复杂的多行字符串转义
-2. ✅ 正确使用 `quoted form of` 来处理文件路径
-3. ✅ 对用户名等变量进行适当的转义处理
-4. ✅ 添加 try-catch 错误处理机制
-
-**技术细节：**
-```swift
-// ❌ 旧方案：容易出错的多行字符串
-let script = """
-do shell script "command \(variable)" password thePassword
-"""
-
-// ✅ 新方案：逐行构建，清晰可控
-let lines = [
-    "set thePassword to text returned of result",
-    "do shell script \"/bin/cp \" & quoted form of \"\(path)\" & \" ...\" user name \"\(user)\" password thePassword with administrator privileges"
-]
-let script = lines.joined(separator: "\n")
-```
+- ✅ 不明文存储在磁盘或代码中
+- ✅ 仅保存在当前设备（`ThisDeviceOnly`，不随 iCloud 钥匙串同步）
+- ✅ Touch ID 通过 `LocalAuthentication` 框架的 `LAContext.evaluatePolicy` 显式触发
 
 ## 技术架构
 
 ### 核心组件
 
-- **HostsManager**: 业务逻辑层，管理 Hosts 配置和提权操作
-- **KeychainManager**: 钥匙串管理器，封装 Security Framework API
-- **ContentView**: 主界面视图
-- **HostsSyntaxEditor**: 语法高亮编辑器
+| 组件 | 职责 |
+|------|------|
+| `HostsManager` | 业务逻辑层，管理 Hosts 配置、提权写入、鉴权流程编排 |
+| `KeychainManager` | 钥匙串管理，封装 Security Framework API（独立文件） |
+| `ContentView` | 主界面视图（SwiftUI） |
+| `HostsSyntaxEditor` | 语法高亮编辑器（AppKit NSTextView） |
 
-### 提权方案对比
+### 鉴权方案
 
-| 方案 | 优点 | 缺点 |
+| 方案 | 用途 | 说明 |
 |------|------|------|
-| ~~临时 AppleScript 文件~~ | - | ❌ 安全风险，需清理临时文件 |
-| ~~Authorization Services~~ | - | ❌ macOS 10.9+ 已废弃 |
-| **内联 AppleScript + 钥匙串** | ✅ 简单安全，用户体验好 | 需要用户首次授权 |
-| Helper Tool (SMJobBless) | ✅ 完全自动化 | ❌ 实现复杂，需额外签名 |
+| **LAContext + 钥匙串** | Touch ID 解锁 | `evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics)` 显式弹指纹，通过后静默读取钥匙串密码 |
+| **内联 AppleScript + 钥匙串密码** | 提权写入 | 用钥匙串中的密码通过 `do shell script ... with administrator privileges` 静默写入 `/etc/hosts` |
+| **NSAlert + NSSecureTextField** | 首次输入 | 首次无凭据时弹出密码框，验证成功后存入钥匙串 |
 
-当前采用：**内联 AppleScript + 钥匙串**（最佳平衡方案）
+> Touch ID 与钥匙串存储**解耦**：钥匙串只存密码（无 `SecAccessControl` 访问控制），Touch ID 用 `LAContext.evaluatePolicy` 作为读取前的显式门禁。这样指纹弹窗由标准 LocalAuthentication API 触发，更可靠。
+
+### 提权写入流程
+
+1. 将合并后的 Hosts 内容写入 `~/.swHosts/temp_hosts_<UUID>` 临时文件（权限 644）
+2. 按鉴权流程获取密码
+3. 通过 `osascript` 执行 `/bin/cp '<临时文件>' /etc/hosts && /bin/chmod 644 /etc/hosts`，附带 `user name`/`password`/`with administrator privileges`
+4. 成功后刷新 DNS 缓存（`killall -HUP mDNSResponder`）
+5. 清理临时文件
 
 ## 开发环境
 
@@ -131,6 +96,7 @@ let script = lines.joined(separator: "\n")
 - **Xcode**: 最新版推荐
 - **语言**: Swift
 - **UI 框架**: SwiftUI + AppKit (NSTextView)
+- **依赖框架**: `LocalAuthentication`、`Security`（系统框架，无需额外配置）
 
 ## 构建与运行
 
@@ -180,20 +146,53 @@ hdiutil create -volname "SwitchHosts" \
 
 ## 数据存储
 
-- **配置文件**: `~/.swHosts/host_configs.json`
-- **临时文件**: `~/.swHosts/temp_*`（自动清理）
-- **钥匙串凭据**: macOS Keychain (Service: `com.switchhosts.admin`)
+| 数据 | 位置 |
+|------|------|
+| 配置文件 | `~/.swHosts/host_configs.json` |
+| 临时文件 | `~/.swHosts/temp_*`（自动清理） |
+| 钥匙串凭据 | macOS Keychain（Service: `com.switchhosts.admin`，Account: 当前用户名） |
 
-## 注意事项
+## ⚠️ 分发注意事项
 
-⚠️ **权限要求**: 首次应用 Hosts 时需要管理员权限授权  
-⚠️ **分发限制**: 外部分发需要 Developer ID 签名与 Notarization  
-⚠️ **Gatekeeper**: 未签名的应用可能在非开发机上被拦截
+### 未公证应用的限制
+
+直接打包的 DMG **未经公证（Notarization）**，分发给他人可能出现：
+
+- **首次能运行，几天后失效**：macOS 的 App Translocation 机制导致钥匙串签名上下文变化，已保存的密码读不到
+- **隐私里放行无效**：该放行是针对隔离标记（`com.apple.quarantine`）的一次性临时操作，重启/重新拷贝后失效
+
+### 临时解决（给接收方）
+
+```bash
+# 1. 拖到 /Applications（不要从 DMG 直接运行）
+# 2. 清除隔离标记
+xattr -cr /Applications/SwitchHosts.app
+```
+
+### 正式分发（推荐）
+
+需 Apple Developer Program（¥688/年）+ Developer ID Application 证书：
+
+```bash
+# 1. 用 Developer ID Application 签名
+codesign --deep --force --options runtime \
+  --sign "Developer ID Application: 你的名字 (TEAMID)" \
+  SwitchHosts.app
+
+# 2. 提交公证
+xcrun notarytool submit SwitchHosts.zip \
+  --apple-id "你的AppleID" \
+  --password "app-specific-password" \
+  --team-id "TEAMID" --wait
+
+# 3. 装订公证票据
+xcrun stapler staple SwitchHosts.app
+
+# 4. DMG 同样需签名 + 公证 + 装订
+```
+
+公证后 Gatekeeper 永久放行，不再触发 App Translocation，钥匙串访问稳定。
 
 ## 许可证
 
 MIT License
-
-## 贡献
-
-欢迎提交 Issue 和 Pull Request！详见 [CONTRIBUTING.md](CONTRIBUTING.md)
